@@ -41,7 +41,7 @@ router.post('/roll', (req, res) => {
 
     const totalRoll = Math.floor(Math.random() * dice) + 1 + bonus - penalty;
 
-    res.json({ totalRoll });
+    res.json({ total: totalRoll });
     
 });
 
@@ -91,7 +91,7 @@ router.post('/multiRoll', (req, res) => {
 
     }
 
-    res.json({ totalRoll: totalRoll });
+    res.json({ total: totalRoll });
 
 });
 
