@@ -26,22 +26,22 @@ router.post('/roll', (req, res) => {
     // Validate the conditions
 
     if (typeof bonus !== "number" && bonus % 1 === 0) { 
-        return res.json("Invalid value for bonus");
+        return res.json({ response:"Invalid value for bonus, the bonus must be an Integer"});
     }
 
     if (typeof penalty !== "number" && penalty % 1 === 0) {
-        return res.json("Invalid value for penalty");
+        return res.json({ response:"Invalid value for penalty, the penalty must be an Integer"});
     }
 
     if (!COMMON_DICES.TYPE_OF_DICE.includes(dice)) {
-        return res.json("Insert a valid format");
+        return res.json({response:`The Dice of ${dice} sides is not supported, Please insert a valid one`});
     }
 
     // Procced with the roll
 
     const totalRoll = Math.floor(Math.random() * dice) + 1 + bonus - penalty;
 
-    res.json({ totalRoll });
+    res.json({ total: totalRoll });
     
 });
 
@@ -63,10 +63,22 @@ router.post('/roll', (req, res) => {
  * @return result of the randomized number of faces
 */
 
-router.post('/multiRoll', (req, res) => {
+router.post('/multiRoll', (req, res, next) => {
 
     const dicesObject = req.body.dices; 
 
+    const bonus = req.body.bonus;
+
+    const penalty = req.body.penalty;
+
+    if (typeof bonus !== "number" && bonus % 1 === 0) { 
+        return res.json({ response:"Invalid value for bonus, the bonus must be an Integer"});
+    }
+    
+    if (typeof penalty !== "number" && penalty % 1 === 0) {
+        return res.json({ response:"Invalid value for penalty, the penalty must be an Integer"});
+    }
+    
     // Transform the key / value into and array of objects 
 
     const dicesArray = Object.entries(dicesObject).map(([sides, rolls]) => ({ 
@@ -82,7 +94,7 @@ router.post('/multiRoll', (req, res) => {
     for (const { sides, rolls } of dicesArray) {
 
         if (!COMMON_DICES.TYPE_OF_DICE.includes(sides)) {
-            return res.json("Insert a valid format");
+            return res.json({response:`The Dice of ${sides} sides is not supported, Please insert a valid one`});
         }
 
         for (let j = 0; j < rolls; j++) {
@@ -91,7 +103,13 @@ router.post('/multiRoll', (req, res) => {
 
     }
 
-    res.json({ totalRoll: totalRoll });
+    if(totalRoll + bonus - penalty < 0){
+
+        throw new Error("Invalid Penalty, greater than possible roll");
+
+    }
+
+    res.json({ total: totalRoll + bonus - penalty });
 
 });
 
