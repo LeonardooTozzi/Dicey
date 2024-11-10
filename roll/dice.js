@@ -67,9 +67,9 @@ router.post('/multiRoll', (req, res, next) => {
 
     const dicesObject = req.body.dices; 
 
-    const bonus = req.body.bonus;
+    const bonus = req.body.bonus || 0
 
-    const penalty = req.body.penalty;
+    const penalty = req.body.penalty || 0
 
     if (typeof bonus !== "number" && bonus % 1 === 0) { 
         return res.json({ response:"Invalid value for bonus, the bonus must be an Integer"});
